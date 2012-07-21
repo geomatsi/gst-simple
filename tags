@@ -1,0 +1,72 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+CC	Makefile	/^CC := $(CROSS_COMPILE)gcc$/;"	m
+CFLAGS	Makefile	/^CFLAGS := -O2 -ggdb -Wall -Wextra -Wno-unused-parameter -Wmissing-prototypes -ansi -std=c99$/;"	m
+CROSS_COMPILE	Makefile	/^CROSS_COMPILE ?= arm-linux-$/;"	m
+D	Makefile	/^D = $(DESTDIR)$/;"	m
+DOWN_PWR2	gles2util.c	/^static inline uint32_t DOWN_PWR2(uint32_t x)$/;"	f	file:
+GLES2UTIL_H	gles2util.h	2;"	d
+GLES2_H	gles2.h	10;"	d
+GLES2_LIBS	Makefile	/^GLES2_LIBS := $(shell pkg-config --libs egl glesv2)$/;"	m
+GST_CFLAGS	Makefile	/^GST_CFLAGS := $(shell pkg-config --cflags gstreamer-0.10 gstreamer-base-0.10)$/;"	m
+GST_GLES2_SINK_TYPE	gles2.h	14;"	d
+GST_LIBS	Makefile	/^GST_LIBS := $(shell pkg-config --libs gstreamer-0.10 gstreamer-base-0.10)$/;"	m
+LDFLAGS	Makefile	/^LDFLAGS := -Wl,--no-undefined -Wl,--as-needed$/;"	m
+MATH_LIBS	Makefile	/^MATH_LIBS := -lm$/;"	m
+QUIET_CC	Makefile	/^QUIET_CC    = @echo '   CC         '$@;$/;"	m
+QUIET_CLEAN	Makefile	/^QUIET_CLEAN = @echo '   CLEAN      '$@;$/;"	m
+QUIET_LINK	Makefile	/^QUIET_LINK  = @echo '   LINK       '$@;$/;"	m
+ROUND_UP	gles2.c	30;"	d	file:
+TEXCOORD_ARRAY	gles2util.c	48;"	d	file:
+TestEGLError	gles2util.c	/^static int TestEGLError(char* msg)$/;"	f	file:
+UP_PWR2	gles2util.c	/^static inline uint32_t UP_PWR2(uint32_t x)$/;"	f	file:
+VERTEX_ARRAY	gles2util.c	47;"	d	file:
+WINDOW_HEIGHT	gles2util.c	45;"	d	file:
+WINDOW_WIDTH	gles2util.c	44;"	d	file:
+X11UTIL_H	x11util.h	2;"	d
+X11_LIBS	Makefile	/^X11_LIBS := $(shell pkg-config --libs x11)$/;"	m
+base	Makefile	/^dist: base := gst-gles2-$(version)$/;"	m
+base_init	gles2.c	/^static void base_init(void *g_class)$/;"	f	file:
+class_init	gles2.c	/^static void class_init(void *g_class, void *class_data)$/;"	f	file:
+display	gles2util.c	/^static void display(void)$/;"	f	file:
+eglConfig	gles2util.c	/^static EGLConfig   eglConfig	= 0;$/;"	v	file:
+eglContext	gles2util.c	/^static EGLContext  eglContext	= 0;$/;"	v	file:
+eglDisplay	gles2util.c	/^static EGLDisplay  eglDisplay	= 0;$/;"	v	file:
+eglSurface	gles2util.c	/^static EGLSurface  eglSurface	= 0;$/;"	v	file:
+generate_sink_template	gles2.c	/^static GstCaps * generate_sink_template(void)$/;"	f	file:
+gles2_sem	gles2.c	/^sem_t gles2_sem;$/;"	v
+gles2_start	gles2util.c	/^int gles2_start(void)$/;"	f
+gles2_thread	gles2util.c	/^void * gles2_thread(void *p)$/;"	f
+glt	gles2.c	/^pthread_t glt;$/;"	v
+gst_gles2_sink	gles2.c	/^struct gst_gles2_sink {$/;"	s	file:
+gst_gles2_sink_class	gles2.c	/^struct gst_gles2_sink_class {$/;"	s	file:
+gst_gles2_sink_get_type	gles2.c	/^GType gst_gles2_sink_get_type(void)$/;"	f
+gst_plugin_desc	gles2.c	/^GstPluginDesc gst_plugin_desc = {$/;"	v
+img_h	gles2.c	/^GLuint img_h;$/;"	v
+img_ptr	gles2.c	/^GLuint *img_ptr;$/;"	v
+img_w	gles2.c	/^GLuint img_w;$/;"	v
+m_fAngle	gles2util.c	/^static GLfloat	m_fAngle = 0.0;$/;"	v	file:
+main_loop	gles2util.c	/^static void main_loop(Display *xdisp)$/;"	f	file:
+parent	gles2.c	/^	GstBaseSink parent;$/;"	m	struct:gst_gles2_sink	file:
+parent_class	gles2.c	/^	GstBaseSinkClass parent_class;$/;"	m	struct:gst_gles2_sink_class	file:
+parent_class	gles2.c	/^static void *parent_class;$/;"	v	file:
+plugin_init	gles2.c	/^static gboolean plugin_init(GstPlugin *plugin)$/;"	f	file:
+prefix	Makefile	/^prefix := \/usr$/;"	m
+render	gles2.c	/^static GstFlowReturn render(GstBaseSink *base, GstBuffer *buffer)$/;"	f	file:
+setcaps	gles2.c	/^static gboolean setcaps(GstBaseSink *base, GstCaps *caps)$/;"	f	file:
+setup	gles2.c	/^static gboolean setup(struct gst_gles2_sink *self, GstCaps *caps)$/;"	f	file:
+shaderObject	gles2util.c	/^static GLuint shaderObject;$/;"	v	file:
+spin	gles2util.c	/^static GLfloat spin = 1.0;$/;"	v	file:
+start	gles2.c	/^static gboolean start(GstBaseSink *base)$/;"	f	file:
+stop	gles2.c	/^static gboolean stop(GstBaseSink *base)$/;"	f	file:
+tex	gles2util.c	/^static GLuint tex;$/;"	v	file:
+update_texture	gles2util.c	/^static void update_texture()$/;"	f	file:
+vbo	gles2util.c	/^static GLuint vbo;$/;"	v	file:
+version	Makefile	/^version := $(shell .\/get-version)$/;"	m
+x11Display	gles2util.c	/^static Display *x11Display	= 0;$/;"	v	file:
+x11Window	gles2util.c	/^static Window x11Window	= 0;$/;"	v	file:
+xutil_create_display	x11util.c	/^int xutil_create_display(Display **xdisp, Window *xwin, int w, int h)$/;"	f

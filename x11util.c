@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "xutil.h"
+#include "x11util.h"
 
 int xutil_create_display(Display **xdisp, Window *xwin, int w, int h)
 {

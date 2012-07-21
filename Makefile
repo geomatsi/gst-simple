@@ -8,8 +8,11 @@ override CFLAGS += -D_GNU_SOURCE -DGST_DISABLE_DEPRECATED
 
 GST_CFLAGS := $(shell pkg-config --cflags gstreamer-0.10 gstreamer-base-0.10)
 GST_LIBS := $(shell pkg-config --libs gstreamer-0.10 gstreamer-base-0.10)
-GL_LIBS := -lglut -lGLU -lGL
-X_LIBS := -lXext -lX11
+
+GLES2_LIBS := $(shell pkg-config --libs egl glesv2)
+X11_LIBS := $(shell pkg-config --libs x11)
+
+MATH_LIBS := -lm
 
 all:
 
@@ -21,10 +24,10 @@ D = $(DESTDIR)
 
 # plugin
 
-libgstgles2.so: gles2.o xutil.o
+libgstgles2.so: gles2.o x11util.o gles2util.o
 libgstgles2.so: override CFLAGS += $(GST_CFLAGS) -fPIC \
 	-D VERSION='"$(version)"' -I./include
-libgstgles2.so: override LIBS += $(GST_LIBS) $(X_LIBS) $(GL_LIBS)
+libgstgles2.so: override LIBS += $(GST_LIBS) $(X11_LIBS) $(GLES2_LIBS) $(MATH_LIBS)
 
 targets += libgstgles2.so
 
