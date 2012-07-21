@@ -9,4 +9,3 @@ void main(void)
 	gl_Position = myPMVMatrix * myVertex;
 	myTexCoord = myUV.st;
 }
-
