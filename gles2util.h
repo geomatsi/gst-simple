@@ -9,6 +9,7 @@ extern GLuint img_h;
 extern GLuint img_w;
 
 extern sem_t gles2_sem;
+extern bool glt_active;
 extern pthread_t glt;
 
 

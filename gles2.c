@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2008-2010 Felipe Contreras
+ * Copyright (C) 2012 matsi
  *
- * Author: Felipe Contreras <felipe.contreras@gmail.com>
+ * Originated from gst-omapfb by Felipe Contreras <felipe.contreras@gmail.com>
  *
  * This file may be used under the terms of the GNU Lesser General Public
  * License version 2.1, a copy of which is found in LICENSE included in the
@@ -34,6 +35,7 @@ GLuint img_h;
 GLuint img_w;
 
 sem_t gles2_sem;
+bool glt_active;
 pthread_t glt;
 
 /* */
@@ -88,8 +90,6 @@ static gboolean setup(struct gst_gles2_sink *self, GstCaps *caps)
 	gst_structure_get_int(structure, "width", &width);
 	gst_structure_get_int(structure, "height", &height);
 
-	fprintf(stderr, "%s: (h, w) = (%d, %d)\n", __func__, height, width);
-
 	img_h = height;
 	img_w = width;
 
@@ -101,6 +101,7 @@ static gboolean setup(struct gst_gles2_sink *self, GstCaps *caps)
 	}
 
     sem_init(&gles2_sem, 0, 1);
+	glt_active = true;
 
     pthread_create(&glt, NULL, gles2_thread, NULL);
 
@@ -140,12 +141,14 @@ static GstFlowReturn render(GstBaseSink *base, GstBuffer *buffer)
 {
 	struct gst_gles2_sink *self = (struct gst_gles2_sink *)base;
 
-	fprintf(stderr, "--> %s\n", __func__);
 	fprintf(stderr, "--> %d\n", GST_BUFFER_SIZE(buffer));
 
 	sem_wait(&gles2_sem);
 	memcpy(img_ptr, GST_BUFFER_DATA(buffer), GST_BUFFER_SIZE(buffer));
     sem_post(&gles2_sem);
+
+	if (!glt_active)
+		return GST_FLOW_UNEXPECTED;
 
 	return GST_FLOW_OK;
 }

@@ -49,6 +49,9 @@ install: $(targets)
 %.so::
 	$(QUIET_LINK)$(CC) $(LDFLAGS) -shared -o $@ $^ $(LIBS)
 
+test:
+	GST_PLUGIN_PATH=. gst-launch-0.10  videotestsrc ! gles2sink
+
 clean:
 	$(QUIET_CLEAN)$(RM) -v $(targets) *.o *.d
 

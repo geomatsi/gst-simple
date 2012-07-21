@@ -24,7 +24,6 @@
  */
 
 #include <math.h>
-
 #include <stdio.h>
 #include <fcntl.h>
 #include <stdlib.h>
@@ -63,7 +62,13 @@ static GLuint shaderObject;
 static GLuint tex;
 static GLuint vbo;
 
-static GLfloat m_fAngle = 0.0;
+static GLfloat m_phi = 0.0;
+static GLfloat m_psi = 0.0;
+static GLfloat m_theta = 0.0;
+
+static GLfloat d_phi = 0.0;
+static GLfloat d_psi = 0.0;
+static GLfloat d_theta = 0.0;
 
 bool do_rotation = false;
 
@@ -109,10 +114,10 @@ static void update_texture()
 static void display(void)
 {
 	float pfIdentity[] = {
-		cos(m_fAngle),	0,	sin(m_fAngle),	0,
-		0,				1,	0,				0,
-		-sin(m_fAngle),	0,	cos(m_fAngle),	0,
-		0,				0,	0,				1
+		cos(m_theta)*cos(m_psi), -cos(m_phi)*sin(m_psi)+sin(m_phi)*sin(m_theta)*cos(m_psi), sin(m_phi)*sin(m_psi)+cos(m_phi)*sin(m_theta)*cos(m_psi), 0,
+		cos(m_theta)*sin(m_psi), cos(m_phi)*cos(m_psi)+sin(m_phi)*sin(m_theta)*sin(m_psi), -sin(m_phi)*cos(m_psi)+cos(m_phi)*sin(m_theta)*sin(m_psi), 0,
+		-sin(m_theta), sin(m_phi)*cos(m_theta), cos(m_phi)*cos(m_theta), 0,
+		0, 0, 0, 1
 	};
 
 	int lc;
@@ -139,8 +144,11 @@ static void display(void)
 
     eglSwapBuffers(eglDisplay, eglSurface);
 
-	if (do_rotation)
-		m_fAngle += .02f;
+	if (do_rotation) {
+		m_phi += d_phi;
+		m_psi += d_psi;
+		m_theta += d_theta;
+	}
 }
 
 static void main_loop(Display *xdisp)
@@ -151,7 +159,9 @@ static void main_loop(Display *xdisp)
 	char buffer[10];
 	int i, code;
 
-	while(1) {
+	bool do_loop = true;
+
+	while(do_loop) {
 
 		xmsgs = XPending(xdisp);
 
@@ -172,25 +182,25 @@ static void main_loop(Display *xdisp)
 					code = XLookupKeysym(&event.xkey, 0);
 
 					if (code == XK_Left) {
-						/* TODO: change rotation matrix */
+						d_phi = d_phi ? 0.0f : 0.02f;
 					}
 					else if (code == XK_Right) {
-						/* TODO: change rotation matrix */
+						d_psi = d_psi ? 0.0f : 0.02f;
 					}
 					else if (code == XK_Up) {
-						/* TODO: change rotation matrix */
+						d_theta = d_theta ? 0.0f : 0.02f;
 					}
-					else if (code == XK_Down) {
-						/* TODO: change rotation matrix */
+					else if (code == XK_space) {
+						do_rotation = !do_rotation;
 					}
 					else {
 						XLookupString(&event.xkey, buffer, sizeof(buffer), NULL, NULL);
 						if (buffer[0] == 27) {
-							exit(0);
+							do_loop = false;
 						} else if (buffer[0] == 's') {
 							do_rotation = !do_rotation;
 						} else if (buffer[0] == 'q') {
-							exit(0);
+							do_loop = false;
 						} else {
 							printf("KeyPress[%d, %d, %d, %d]\n",
 								buffer[0], buffer[1], buffer[2], buffer[3]);
@@ -457,12 +467,16 @@ void * gles2_thread(void *p)
     glDeleteBuffers(1, &vbo);
 	glDeleteTextures(1, &tex);
 
+	XCloseDisplay(x11Display);
+
 display_out:
 
     /* delete context */
 
 	eglMakeCurrent(eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 	eglTerminate(eglDisplay);
+
+	glt_active = false;
 
     return NULL;
 }
