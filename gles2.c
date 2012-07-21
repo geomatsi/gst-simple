@@ -27,8 +27,6 @@
 #include "gles2util.h"
 #include "gles2.h"
 
-#define ROUND_UP(num, scale) (((num) + ((scale) - 1)) & ~((scale) - 1))
-
 /* */
 
 GLuint *img_ptr;

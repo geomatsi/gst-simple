@@ -29,6 +29,7 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include <unistd.h>
 #include <pthread.h>
 #include <inttypes.h>
@@ -38,6 +39,7 @@
 
 #include "gles2util.h"
 #include "x11util.h"
+#include "shutil.h"
 
 /* */
 
@@ -61,20 +63,11 @@ static GLuint shaderObject;
 static GLuint tex;
 static GLuint vbo;
 
-static GLfloat	m_fAngle = 0.0;
-static GLfloat spin = 1.0;
+static GLfloat m_fAngle = 0.0;
+
+bool do_rotation = false;
 
 /* */
-
-static inline uint32_t UP_PWR2(uint32_t x)
-{
-        return 1 << (32 - __builtin_clz (x - 1));
-}
-
-static inline uint32_t DOWN_PWR2(uint32_t x)
-{
-        return 1 << ((32 - __builtin_clz (x - 1)) - 1);
-}
 
 static int TestEGLError(char* msg)
 {
@@ -131,21 +124,23 @@ static void display(void)
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-	// Pass the vertex data
+	/* pass vertex data */
 
 	glEnableVertexAttribArray(VERTEX_ARRAY);
 	glVertexAttribPointer(VERTEX_ARRAY, 3, GL_FLOAT, GL_FALSE, 5*sizeof(GLfloat), 0);
 
-	// pass the texture coordinate data
+	/* pass the texture coordinate data */
 
 	glEnableVertexAttribArray(TEXCOORD_ARRAY);
 	glVertexAttribPointer(TEXCOORD_ARRAY, 2, GL_FLOAT, GL_FALSE, 5*sizeof(GLfloat), (void*) (3 * sizeof(GLfloat)));
 
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     eglSwapBuffers(eglDisplay, eglSurface);
-	m_fAngle += .02f;
+
+	if (do_rotation)
+		m_fAngle += .02f;
 }
 
 static void main_loop(Display *xdisp)
@@ -177,30 +172,26 @@ static void main_loop(Display *xdisp)
 					code = XLookupKeysym(&event.xkey, 0);
 
 					if (code == XK_Left) {
-						printf("LEFT\n");
-						spin = -1.0;
+						/* TODO: change rotation matrix */
 					}
 					else if (code == XK_Right) {
-						printf("RIGHT\n");
-						spin = +1.0;
+						/* TODO: change rotation matrix */
 					}
 					else if (code == XK_Up) {
-						printf("UP\n");
-						spin = 0.0;
+						/* TODO: change rotation matrix */
 					}
 					else if (code == XK_Down) {
-						printf("UP\n");
-						spin = 0.0;
+						/* TODO: change rotation matrix */
 					}
 					else {
 						XLookupString(&event.xkey, buffer, sizeof(buffer), NULL, NULL);
 						if (buffer[0] == 27) {
 							exit(0);
-						}
-						else if (buffer[0] == 'q') {
+						} else if (buffer[0] == 's') {
+							do_rotation = !do_rotation;
+						} else if (buffer[0] == 'q') {
 							exit(0);
-						}
-						else {
+						} else {
 							printf("KeyPress[%d, %d, %d, %d]\n",
 								buffer[0], buffer[1], buffer[2], buffer[3]);
 						}
@@ -290,6 +281,8 @@ cleanup:
 
 void * gles2_thread(void *p)
 {
+
+#if 0
     GLfloat afVertices[] = {
         -0.4f, -0.4f, +0.4f,
 		+0.0f, +0.0f,
@@ -299,6 +292,30 @@ void * gles2_thread(void *p)
 		+0.5f, +1.0f,
     };
 
+	GLint afLength = 5;	/* numbers per vertex */
+	GLint afLines = 3;	/* number of vertexes */
+#else
+
+	GLfloat afVertices[] = {
+        -0.4f, -0.4f, +0.4f,
+		+0.0f, +0.0f,
+        +0.4f, -0.4f, +0.4f,
+		+1.0f, +0.0f,
+        +0.4f, +0.4f, -0.4f,
+		+1.0f, +1.0f,
+
+		-0.4f, -0.4f, +0.4f,
+		+0.0f, +0.0f,
+        +0.4f, +0.4f, -0.4f,
+		+1.0f, +1.0f,
+        -0.4f, +0.4f, -0.4f,
+		+0.0f, +1.0f,
+    };
+
+	GLint afLength = 5;	/* numbers per vertex */
+	GLint afLines = 6;	/* number of vertexes */
+#endif
+
 	GLint shaderCompiled;
     GLint shaderLinked;
 
@@ -307,12 +324,13 @@ void * gles2_thread(void *p)
 
 	/* shader code */
 
+#if 0
 	const char* shaderFragmentCode = "\
 		uniform sampler2D sampler2d;\
 		varying mediump vec2	myTexCoord;\
 		void main (void)\
 		{\
-		    gl_FragColor = texture2D(sampler2d,myTexCoord);\
+		    gl_FragColor = texture2D(sampler2d, myTexCoord);\
 		}";
 
 	const char* shaderVertexCode = "\
@@ -325,6 +343,24 @@ void * gles2_thread(void *p)
 			gl_Position = myPMVMatrix * myVertex;\
 			myTexCoord = myUV.st;\
 		}";
+#else
+	char* shaderFragmentCode;
+	char* shaderVertexCode;
+
+	shaderFragmentCode = shader_fread(FRAGMENT_SHADER);
+
+	if (!shaderFragmentCode) {
+		printf("failed to load %s shader\n", FRAGMENT_SHADER);
+		goto display_out;
+	}
+
+	shaderVertexCode = shader_fread(VERTEX_SHADER);
+
+	if (!shaderVertexCode) {
+		printf("failed to load %s shader\n", VERTEX_SHADER);
+		goto display_out;
+	}
+#endif
 
     /* we make current context in this thread */
 
@@ -408,7 +444,7 @@ void * gles2_thread(void *p)
 
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, 3*5*sizeof(GLfloat), afVertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, afLength*afLines*sizeof(GLfloat), afVertices, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	/* init test texture */

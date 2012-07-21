@@ -24,7 +24,7 @@ D = $(DESTDIR)
 
 # plugin
 
-libgstgles2.so: gles2.o x11util.o gles2util.o
+libgstgles2.so: gles2.o x11util.o gles2util.o shutil.o
 libgstgles2.so: override CFLAGS += $(GST_CFLAGS) -fPIC \
 	-D VERSION='"$(version)"' -I./include
 libgstgles2.so: override LIBS += $(GST_LIBS) $(X11_LIBS) $(GLES2_LIBS) $(MATH_LIBS)
