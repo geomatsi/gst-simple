@@ -1,0 +1,8 @@
+==== Build plugin:
+	# DESTDIR=. CROSS_COMPILE= make install
+
+==== Test plugin:
+
+	# GST_PLUGIN_PATH=. gst-launch-0.10  videotestsrc ! gles2sink
+	# GST_PLUGIN_PATH=. gst-launch-0.10  filesrc location=/home/matsi/video/kandagar.mp4 ! decodebin2 !   ffmpegcolorspace ! 'video/x-raw-rgb' ! gles2sink
+	# GST_PLUGIN_PATH=. gst-launch-0.10  filesrc location=/home/matsi/video/test/test.ogg ! oggdemux name=demuxer demuxer. ! queue ! vorbisdec ! audioconvert ! audioresample ! autoaudiosink  demuxer. ! queue ! theoradec ! ffmpegcolorspace ! 'video/x-raw-rgb' ! gles2sink
