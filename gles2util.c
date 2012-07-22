@@ -213,9 +213,16 @@ static void main_loop(Display *xdisp)
 			}
 		}
 
+#if 0
         sem_wait(&gles2_sem);
         update_texture();
         sem_post(&gles2_sem);
+#else
+		if (g_atomic_int_compare_and_exchange(&gles2_sem, 2, 3)){
+			update_texture();
+			g_atomic_int_set(&gles2_sem, 0);
+		}
+#endif
 
         display();
 	}

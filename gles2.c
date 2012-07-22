@@ -34,7 +34,12 @@ GLuint *img_ptr;
 GLuint img_h;
 GLuint img_w;
 
+#if 0
 sem_t gles2_sem;
+#else
+volatile gint gles2_sem;
+#endif
+
 bool glt_active;
 pthread_t glt;
 
@@ -100,7 +105,12 @@ static gboolean setup(struct gst_gles2_sink *self, GstCaps *caps)
 		return false;
 	}
 
+#if 0
     sem_init(&gles2_sem, 0, 1);
+#else
+	gles2_sem = 0;
+#endif
+
 	glt_active = true;
 
     pthread_create(&glt, NULL, gles2_thread, NULL);
@@ -143,9 +153,17 @@ static GstFlowReturn render(GstBaseSink *base, GstBuffer *buffer)
 
 	fprintf(stderr, "--> %d\n", GST_BUFFER_SIZE(buffer));
 
+#if 0
 	sem_wait(&gles2_sem);
 	memcpy(img_ptr, GST_BUFFER_DATA(buffer), GST_BUFFER_SIZE(buffer));
     sem_post(&gles2_sem);
+#else
+	if (g_atomic_int_compare_and_exchange(&gles2_sem, 0, 1)) {
+		memcpy(img_ptr, GST_BUFFER_DATA(buffer), GST_BUFFER_SIZE(buffer));
+		g_atomic_int_set(&gles2_sem, 2);
+	}
+
+#endif
 
 	if (!glt_active)
 		return GST_FLOW_UNEXPECTED;
